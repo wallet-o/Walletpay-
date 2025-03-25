@@ -1,8 +1,15 @@
 const express = require('express');
 const fs = require('fs').promises;
 const path = require('path');
+const cors = require('cors'); // Added for CORS support
+
 const app = express();
 const port = process.env.PORT || 3000;
+
+// Enable CORS for frontend requests
+app.use(cors({
+    origin: '*' // Adjust this to your frontend's domain in production
+}));
 
 app.use(express.json());
 app.use(express.static('public')); // Serve static files from 'public' folder
@@ -93,6 +100,11 @@ app.get('/withdrawals', async (req, res) => {
         console.error('Error displaying withdrawals:', error);
         res.status(500).send('Error loading withdrawal records');
     }
+});
+
+// Redirect root URL to /withdrawals
+app.get('/', (req, res) => {
+    res.redirect('/withdrawals');
 });
 
 // Store balance and history
