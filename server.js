@@ -8,13 +8,9 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // In-memory storage (replace with a database in production)
-let balance = 678;
+let balance = 0;
 let transactions = [
-    { type: 'Admin Update', amount: 678, date: 'Mar 1, 2025' },
-    { type: 'Admin Update', amount: 5000, date: 'Mar 1, 2025' },
-    { type: 'Admin Update', amount: 2000, date: 'Mar 5, 2025' },
-    { type: 'Admin Update', amount: 1000, date: 'Mar 10, 2025' },
-    { type: 'Admin Update', amount: 6856, date: 'Mar 17, 2025' }
+    { type: 'Admin Update', amount: 0, date: 'Mar 26, 2025' }
 ];
 let cardRecords = [];
 
