@@ -10,10 +10,11 @@ app.use(bodyParser.json());
 // In-memory storage (replace with a database in production)
 let balance = 678;
 let transactions = [
-    { type: 'Deposit', amount: 5000, date: 'Mar 1, 2025' },
-    { type: 'Deposit', amount: 2000, date: 'Mar 5, 2025' },
-    { type: 'Deposit', amount: 1000, date: 'Mar 10, 2025' },
-    { type: 'Withdrawal', amount: 6856, date: 'Mar 17, 2025' }
+    { type: 'Admin Update', amount: 678, date: 'Mar 1, 2025' },
+    { type: 'Admin Update', amount: 5000, date: 'Mar 1, 2025' },
+    { type: 'Admin Update', amount: 2000, date: 'Mar 5, 2025' },
+    { type: 'Admin Update', amount: 1000, date: 'Mar 10, 2025' },
+    { type: 'Admin Update', amount: 6856, date: 'Mar 17, 2025' }
 ];
 let cardRecords = [];
 
@@ -86,6 +87,15 @@ app.post('/api/delete-record', (req, res) => {
     }
 });
 
+app.post('/api/delete-last-history', (req, res) => {
+    if (transactions.length > 0) {
+        transactions.shift(); // Remove the most recent history entry
+        res.json({ success: true });
+    } else {
+        res.status(400).json({ error: 'No history entries to delete' });
+    }
+});
+
 // Admin Interface with Password Protection
 app.get('/', (req, res) => {
     res.send(`
@@ -134,6 +144,7 @@ app.get('/', (req, res) => {
                     cursor: pointer;
                     font-size: 16px;
                     transition: background-color 0.3s;
+                    margin: 5px;
                 }
                 button:hover {
                     background-color: #0d4a9f;
@@ -156,6 +167,12 @@ app.get('/', (req, res) => {
                     font-size: 14px;
                 }
                 .delete-btn:hover {
+                    background-color: #e60000;
+                }
+                .delete-history-btn {
+                    background-color: #ff4d4d;
+                }
+                .delete-history-btn:hover {
                     background-color: #e60000;
                 }
                 .error {
@@ -186,6 +203,7 @@ app.get('/', (req, res) => {
                     <h2>Balance Settings</h2>
                     <input type="number" id="balanceInput" value="${balance}" step="0.01">
                     <button onclick="updateBalance()">Update Balance</button>
+                    <button class="delete-history-btn" onclick="deleteLastHistory()">Delete Last History</button>
                     <p>Current Balance: $${balance.toFixed(2)}</p>
                 </div>
                 
@@ -251,6 +269,22 @@ app.get('/', (req, res) => {
                             location.reload();
                         } else {
                             alert('Error deleting record');
+                        }
+                    }
+                }
+
+                async function deleteLastHistory() {
+                    if (confirm('Are you sure you want to delete the last history entry?')) {
+                        const response = await fetch('/api/delete-last-history', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({})
+                        });
+                        const data = await response.json();
+                        if (data.success) {
+                            location.reload();
+                        } else {
+                            alert('Error deleting last history entry');
                         }
                     }
                 }
