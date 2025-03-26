@@ -74,8 +74,8 @@ app.post('/api/update-balance', (req, res) => {
     res.json({ success: true, newBalance: balance });
 });
 
-// Admin Interface
-app.get('/admin', (req, res) => {
+// Admin Interface at Root Route
+app.get('/', (req, res) => {
     res.send(`
         <!DOCTYPE html>
         <html>
@@ -138,11 +138,6 @@ app.get('/admin', (req, res) => {
         </body>
         </html>
     `);
-});
-
-// Handle root route to prevent "Cannot GET /" error
-app.get('/', (req, res) => {
-    res.status(404).json({ error: 'This is the backend API. Use /api endpoints for data or visit /admin for the admin panel.' });
 });
 
 app.listen(port, () => {
